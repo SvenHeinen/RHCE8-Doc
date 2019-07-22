@@ -1,0 +1,31 @@
+---
+- hosts: local
+  gather_facts: yes
+  vars:
+    dir: /home/sheinen/demo
+
+  tasks:
+  - name: Set a directory
+    file:
+      path: "{{ dir }}" 
+      state: directory
+      owner: sheinen
+      group: sheinen
+      mode: 0755
+
+  - name: Create file based on fact
+    file:
+      path: "{{ dir }}/{{ ansible_default_ipv4.address }}"
+      state: touch
+
+  - name: Archive said file
+    archive:
+      path: "{{ dir }}"
+      dest: "{{ dir }}.tar.gz"
+      format: gz
+      force_archive: yes
+
+  - name: Unarchive said file
+    unarchive:
+      src: "{{ dir }}.tar.gz"
+      dest: "/tmp"
